@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
@@ -13,24 +12,23 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-
+    RatingBar otherRating;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        otherRating = (RatingBar) findViewById(R.id.otherRatingsBar);
+        setScore();
+        RatingBar userRating = (RatingBar) findViewById(R.id.ratingBar);
         String meal = getMeal();
-        //Sets text to getMeal
-        //getActionBar().setTitle("It's " + meal + ".");
-        ((TextView)findViewById(R.id.mealNamer)).setText("It's " + meal + ".");
+        ((TextView) findViewById(R.id.mealDescrip)).setText("It's " + meal + ".");
         ((TextView)findViewById(R.id.ratingSummary)).setText("10 other people have given " + meal);
-        //Update little tracker beside stars
-        ((RatingBar)findViewById(R.id.ratingBar)).setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                ((TextView)findViewById(R.id.rateFraction)).setText("(" + (int)((RatingBar) findViewById(R.id.ratingBar)).getRating() + "/5)");
-                return false;
-            }
-        });
+        int score = (int) userRating.getRating();
+
+    }
+    //TODO: insert code to get rating from server
+    void setScore(){
+        otherRating.setRating(1f);
     }
 
     /**

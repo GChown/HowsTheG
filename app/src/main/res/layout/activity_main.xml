@@ -15,14 +15,14 @@
         android:id="@+id/ratingBar"
         android:stepSize="1"
         android:numStars="5"
-        android:layout_marginTop="49dp"
-        android:layout_alignParentTop="true"
+        android:layout_marginTop="66dp"
+        android:layout_below="@+id/title"
         android:layout_centerHorizontal="true" />
 
     <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ratingBar2"
+        android:id="@+id/otherRatingsBar"
         android:clickable="false"
         android:isIndicator="true"
         android:layout_marginBottom="102dp"
@@ -34,18 +34,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Give the cafeteria a rating"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/ratingBar"
+        android:text="Give the cafeteria a rating."
+        android:id="@+id/title"
+        android:layout_marginTop="22dp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="10 ther people have given dinner"
-        android:id="@+id/textView"
-        android:layout_above="@+id/ratingBar2"
+        android:text="10 other people have given dinner"
+        android:id="@+id/ratingSummary"
+        android:layout_above="@+id/otherRatingsBar"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="It&apos;s Dinner (EXAMPLE)"
+        android:id="@+id/mealDescrip"
+        android:layout_marginTop="37dp"
+        android:layout_below="@+id/title"
         android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
