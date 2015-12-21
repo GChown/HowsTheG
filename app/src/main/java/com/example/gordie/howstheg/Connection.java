@@ -14,11 +14,10 @@ import java.net.Socket;
  * Used to receive and send information to server - at time of writing not yet implemented.
  */
 public class Connection {
-    //TODO: make this actually connect to a server
     Socket client;
     DataInputStream din;
     DataOutputStream dout;
-    int gotRating;
+    private float gotRating;
     String host;
     int port;
     /**
@@ -29,9 +28,12 @@ public class Connection {
     public Connection(String host, int port){
         this.host = host;
         this.port = port;
-        new fetchRating().execute(host, "" + port);
-            System.out.println("Connecting to " + client);
-            gotRating = 0;
+        gotRating = 0;
+        try {
+            gotRating = new fetchRating().execute(host, "" + port).get();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -48,8 +50,15 @@ public class Connection {
      * Gets the average score from server
      * @return Score everybody else voted on
      */
-    public int getRating(){
+    public float getRating(){
         return gotRating;
+    }
+    public void setRating(RatingBar bar) {
+        try{
+            bar.setRating(new fetchRating().execute().get());
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -62,27 +71,23 @@ public class Connection {
     }
 
 
-    class fetchRating extends AsyncTask<String, Void, Void> {
-        protected Void doInBackground(String... params){
+    public class fetchRating extends AsyncTask<String, Void, Float> {
+        protected Float doInBackground(String... params){
+            System.out.println("Running in background");
+            float returning = 1;
             try{
                 client = new Socket(host, port);
                 dout = new DataOutputStream(client.getOutputStream());
                 din = new DataInputStream(client.getInputStream());
-
-                byte[] info = new byte[2];
-                //Send byte 0, get array of bytes (2):
-                //rating, numVoters
-                dout.writeByte(0);
-                din.read(info);
-                for(byte b : info){
-                    System.out.print(b + ", ");
-                }
-
-
+                dout.writeInt(0);
+                byte[] recv = new byte[2];
+                din.read(recv);
+                returning = recv[0];
+                gotRating = (int) returning;
             }catch(IOException e){
                 e.printStackTrace();
             }
-            return null;
+            return returning;
         }
     }
 }
