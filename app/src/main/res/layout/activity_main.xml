@@ -23,12 +23,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/otherRatingsBar"
-        android:clickable="false"
         android:isIndicator="true"
-        android:layout_marginBottom="102dp"
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/ratingBar"
-        android:layout_alignStart="@+id/ratingBar" />
+        android:layout_alignStart="@+id/ratingBar"
+        android:layout_marginBottom="119dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -46,8 +45,9 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="10 other people have given dinner"
         android:id="@+id/ratingSummary"
-        android:layout_above="@+id/otherRatingsBar"
-        android:layout_centerHorizontal="true" />
+        android:layout_below="@+id/ratingBar"
+        android:layout_alignRight="@+id/title"
+        android:layout_alignEnd="@+id/title" />
 
     <TextView
         android:layout_width="wrap_content"
