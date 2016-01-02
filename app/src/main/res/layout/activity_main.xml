@@ -27,7 +27,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignLeft="@+id/ratingBar"
         android:layout_alignStart="@+id/ratingBar"
-        android:layout_marginBottom="119dp" />
+        android:layout_marginBottom="25dp" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,9 +45,8 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="10 other people have given dinner"
         android:id="@+id/ratingSummary"
-        android:layout_below="@+id/ratingBar"
-        android:layout_alignRight="@+id/title"
-        android:layout_alignEnd="@+id/title" />
+        android:layout_above="@+id/otherRatingsBar"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"

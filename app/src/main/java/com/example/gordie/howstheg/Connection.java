@@ -58,6 +58,11 @@ public class Connection {
      * @return Score everybody else voted on
      */
     public float getRating(){
+        try {
+            gotRating = new fetchRating().execute().get();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return gotRating;
     }
 
