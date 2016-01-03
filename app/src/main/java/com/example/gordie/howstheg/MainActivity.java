@@ -30,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         RatingBar otherRating = (RatingBar) findViewById(R.id.otherRatingsBar);
         RatingBar userRating = (RatingBar) findViewById(R.id.ratingBar);
 
+        setLabels();
+
         if (savedInstanceState != null) {
             // Restore value of members from saved state
             otherRating.setRating(savedInstanceState.getFloat("otherRating"));
@@ -37,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             setRating(otherRating, connection);
         }
+
         LayerDrawable stars = (LayerDrawable) otherRating.getProgressDrawable();
         stars.getDrawable(1).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(2).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
@@ -44,15 +47,12 @@ public class MainActivity extends AppCompatActivity {
         stars.getDrawable(1).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
         stars.getDrawable(2).setColorFilter(Color.RED, PorterDuff.Mode.SRC_ATOP);
 
-
         //Send rating on change
         userRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 connection.sendRating((int) rating);
             }
         });
-
-        setLabels();
     }
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -83,18 +83,23 @@ public class MainActivity extends AppCompatActivity {
         anim.start();
     }
 
+
     /**
      * Fetches rating from connection once every second
      * @param bar RatingBar to be changed
      * @param connection Connection to pull rating from
      */
     private void setRating(final RatingBar bar, final Connection connection) {
-        final Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            public void run() {
-                setRating(bar, connection.getRating());
-                h.postDelayed(this, 1000);
-            }}, 1000);
+        if(!connection.isConnected()) setRating(bar, 0);
+        else {
+            final Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+                public void run() {
+                    setRating(bar, connection.getRating());
+                    h.postDelayed(this, 1000);
+                }
+            }, 1000);
+        }
     }
 
     //Very broken at the moment.
@@ -103,22 +108,37 @@ public class MainActivity extends AppCompatActivity {
         DateFormat dateFormat = new SimpleDateFormat("HHmm");
         Calendar cal = Calendar.getInstance();
         int time = Integer.parseInt(dateFormat.format(cal.getTime()));
-        //time = 2000; //testing code, remove in release
-        String meal = getMeal(time);
+        //time = 2200; // testing code, remove in release
+        int hour = time / 100;
+        final String meal = getMeal(hour);
         String entering = "It's ";
-        if(time < 8000){
-            entering = "Caf opens at 8 tomorrow.";
+        if(hour < 8 || hour >= 22){
+            entering = "Caf opens at 8 AM.";
         }
-        else if(time > 8000 && time < 1100){
+        else if(hour >= 8 && hour < 11){
             entering += meal;
         }
-        else if(time > 1100 && time < 2200){
+        else if(hour >= 11 && hour < 22){
             entering += meal;
-            if(time > 1800){
+            if(hour >= 18){
                 entering += " (closing at 10!)";
             }
         }
+
         ((TextView) findViewById(R.id.mealDescrip)).setText(entering);
+
+        if(connection.isConnected()){
+            final Handler h = new Handler();
+            h.postDelayed(new Runnable() {
+                public void run() {
+                    ((TextView) findViewById(R.id.ratingSummary)).setText(connection.getNumVotes() + " people have given " + meal);
+                    h.postDelayed(this, 1000);
+                }
+            }, 1000);
+        }else{
+            ((TextView) findViewById(R.id.ratingSummary)).setText("Couldn't connect to server.");
+        }
+
     }
 
     /**
@@ -129,12 +149,10 @@ public class MainActivity extends AppCompatActivity {
     String getMeal(int time){
         if(time < 10)
             return "breakfast";
-        if(time > 10 && time < 4)
+        if(time > 10 && time < 18)
             return "lunch";
-        if(time > 4)
+        if(time > 18)
             return "dinner";
-        else return " ...I'm not actually sure!";
+        else return "ERROR TIME!";
     }
-
 }
-

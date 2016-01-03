@@ -8,27 +8,6 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.example.gordie.howstheg.MainActivity">
-
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ratingBar"
-        android:stepSize="1"
-        android:numStars="5"
-        android:layout_marginTop="66dp"
-        android:layout_below="@+id/title"
-        android:layout_centerHorizontal="true" />
-
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/otherRatingsBar"
-        android:isIndicator="true"
-        android:layout_alignParentBottom="true"
-        android:layout_alignLeft="@+id/ratingBar"
-        android:layout_alignStart="@+id/ratingBar"
-        android:layout_marginBottom="25dp" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,24 +17,39 @@
         android:layout_marginTop="22dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
-
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="10 other people have given dinner"
+        android:text="It's eating time."
+        android:id="@+id/mealDescrip"
+        android:layout_below="@+id/title"
+        android:paddingTop="25dp"
+        android:layout_centerHorizontal="true" />
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/ratingBar"
+        android:stepSize="1"
+        android:numStars="5"
+        android:layout_below="@+id/mealDescrip"
+        android:layout_centerHorizontal="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Getting information..."
         android:id="@+id/ratingSummary"
         android:layout_above="@+id/otherRatingsBar"
         android:layout_centerHorizontal="true" />
-
-    <TextView
+    <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="It&apos;s Dinner (EXAMPLE)"
-        android:id="@+id/mealDescrip"
-        android:layout_marginTop="37dp"
-        android:layout_below="@+id/title"
-        android:layout_centerHorizontal="true" />
+        android:id="@+id/otherRatingsBar"
+        android:isIndicator="true"
+        android:layout_alignParentBottom="true"
+        android:layout_alignLeft="@+id/ratingBar"
+        android:layout_centerHorizontal="true"
+        android:paddingBottom="50dp"/>
 
 </RelativeLayout>

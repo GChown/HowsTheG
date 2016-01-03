@@ -71,7 +71,7 @@ public class Connection {
      * @return Number of people who have voted
      */
     public int getNumVotes(){
-
+        new fetchRating().execute();
         return numVotes;
     }
 
