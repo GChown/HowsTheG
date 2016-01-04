@@ -1,4 +1,4 @@
-package com.gordiechown.howstheg.howstheg;
+package com.gordiechown.howstheg;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 
-import com.gordiechown.howstheg.howstheg.R;
+import com.gordiechown.howstheg.R;
 
 public class MainActivity extends AppCompatActivity {
     private Connection connection;

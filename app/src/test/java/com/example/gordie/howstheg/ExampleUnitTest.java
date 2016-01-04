@@ -1,4 +1,4 @@
-package com.example.gordie.howstheg;
+package com.gordiechown.howstheg.howstheg;
 
 import org.junit.Test;
 
