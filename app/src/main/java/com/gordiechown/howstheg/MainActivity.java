@@ -1,4 +1,4 @@
-package com.example.gordie.howstheg;
+package com.gordiechown.howstheg;
 
 import android.animation.ObjectAnimator;
 import android.graphics.Color;
@@ -15,8 +15,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 
+import com.gordiechown.howstheg.howstheg.R;
+
 public class MainActivity extends AppCompatActivity {
-    Connection connection;
+    private Connection connection;
+    private String meal;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,13 +34,12 @@ public class MainActivity extends AppCompatActivity {
         RatingBar userRating = (RatingBar) findViewById(R.id.ratingBar);
 
         setLabels();
+        updateUIThread();
 
         if (savedInstanceState != null) {
             // Restore value of members from saved state
             otherRating.setRating(savedInstanceState.getFloat("otherRating"));
             userRating.setRating(savedInstanceState.getFloat("myRating"));
-        } else {
-            setRating(otherRating, connection);
         }
 
         LayerDrawable stars = (LayerDrawable) otherRating.getProgressDrawable();
@@ -83,22 +85,23 @@ public class MainActivity extends AppCompatActivity {
         anim.start();
     }
 
-
-    /**
-     * Fetches rating from connection once every second
-     * @param bar RatingBar to be changed
-     * @param connection Connection to pull rating from
+    /*
+    * Every second (1000ms) update the otherRating bar and
+    * numVotes from server
      */
-    private void setRating(final RatingBar bar, final Connection connection) {
-        if(!connection.isConnected()) setRating(bar, 0);
-        else {
+    private void updateUIThread(){
+        if(connection.isConnected()){
             final Handler h = new Handler();
             h.postDelayed(new Runnable() {
                 public void run() {
-                    setRating(bar, connection.getRating());
+                    setRating(((RatingBar) findViewById(R.id.otherRatingsBar)), connection.getRating());
+                    ((TextView) findViewById(R.id.ratingSummary)).setText(connection.getNumVotes() + " people have given " + meal);
                     h.postDelayed(this, 1000);
                 }
             }, 1000);
+        }else{
+            setRating(((RatingBar) findViewById(R.id.otherRatingsBar)), 0);
+            ((TextView) findViewById(R.id.ratingSummary)).setText("Couldn't connect to server.");
         }
     }
 
@@ -108,9 +111,9 @@ public class MainActivity extends AppCompatActivity {
         DateFormat dateFormat = new SimpleDateFormat("HHmm");
         Calendar cal = Calendar.getInstance();
         int time = Integer.parseInt(dateFormat.format(cal.getTime()));
-        //time = 2200; // testing code, remove in release
+        //time = 900; // testing code, remove in release
         int hour = time / 100;
-        final String meal = getMeal(hour);
+        meal = getMeal(hour);
         String entering = "It's ";
         if(hour < 8 || hour >= 22){
             entering = "Caf opens at 8 AM.";
@@ -124,20 +127,7 @@ public class MainActivity extends AppCompatActivity {
                 entering += " (closing at 10!)";
             }
         }
-
         ((TextView) findViewById(R.id.mealDescrip)).setText(entering);
-
-        if(connection.isConnected()){
-            final Handler h = new Handler();
-            h.postDelayed(new Runnable() {
-                public void run() {
-                    ((TextView) findViewById(R.id.ratingSummary)).setText(connection.getNumVotes() + " people have given " + meal);
-                    h.postDelayed(this, 1000);
-                }
-            }, 1000);
-        }else{
-            ((TextView) findViewById(R.id.ratingSummary)).setText("Couldn't connect to server.");
-        }
 
     }
 
