@@ -14,7 +14,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
-
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -28,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final String HOST = "192.168.1.127";
+        final String HOST = "146.148.39.126";
         final int PORT = 8000;
         String android_id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
         connection = new Connection(HOST, PORT, android_id);
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         });
         mAdView = (AdView) findViewById(R.id.adView);
         //ADD TESTING DEVICE OR FACE THE CONSEQUENCES
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("test").build();
         mAdView.loadAd(adRequest);
     }
     @Override
@@ -105,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
                         setRating(((RatingBar) findViewById(R.id.otherRatingsBar)), connection.getRating());
                         ((TextView) findViewById(R.id.ratingSummary)).setText(connection.getNumVotes() + " people have given " + meal);
                         h.postDelayed(this, 3000);
+                    }else{
+                        updateUIThread();
                     }
                 }
             }, 3000);
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
         //time = 900; // testing code, remove in release
         int hour = time / 100;
         meal = getMeal(hour);
-        String entering = "It's ";
+        String entering = "How's ";
         if(hour < 8 || hour >= 22){
             entering = "Caf opens at 8 AM.";
         }
@@ -136,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 entering += " (closing at 10!)";
             }
         }
-        ((TextView) findViewById(R.id.mealDescrip)).setText(entering);
+        ((TextView) findViewById(R.id.mealDescrip)).setText(entering + "?");
 
     }
 
@@ -148,10 +149,10 @@ public class MainActivity extends AppCompatActivity {
     String getMeal(int time){
         if(time < 10)
             return "breakfast";
-        if(time > 10 && time < 14)
+        if(time >= 10 && time <= 14)
             return "lunch";
         if(time > 14)
             return "dinner";
-        else return "ERROR TIME!";
+        else return "error o'clock";
     }
 }
