@@ -15,11 +15,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 
-import com.gordiechown.howstheg.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 public class MainActivity extends AppCompatActivity {
     private Connection connection;
     private String meal;
+    private AdView mAdView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
                 connection.sendRating((int) rating);
             }
         });
+        mAdView = (AdView) findViewById(R.id.adView);
+        //ADD TESTING DEVICE OR FACE THE CONSEQUENCES
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
@@ -94,11 +101,13 @@ public class MainActivity extends AppCompatActivity {
             final Handler h = new Handler();
             h.postDelayed(new Runnable() {
                 public void run() {
-                    setRating(((RatingBar) findViewById(R.id.otherRatingsBar)), connection.getRating());
-                    ((TextView) findViewById(R.id.ratingSummary)).setText(connection.getNumVotes() + " people have given " + meal);
-                    h.postDelayed(this, 1000);
+                    if(connection.isConnected()) {
+                        setRating(((RatingBar) findViewById(R.id.otherRatingsBar)), connection.getRating());
+                        ((TextView) findViewById(R.id.ratingSummary)).setText(connection.getNumVotes() + " people have given " + meal);
+                        h.postDelayed(this, 3000);
+                    }
                 }
-            }, 1000);
+            }, 3000);
         }else{
             setRating(((RatingBar) findViewById(R.id.otherRatingsBar)), 0);
             ((TextView) findViewById(R.id.ratingSummary)).setText("Couldn't connect to server.");
@@ -139,9 +148,9 @@ public class MainActivity extends AppCompatActivity {
     String getMeal(int time){
         if(time < 10)
             return "breakfast";
-        if(time > 10 && time < 18)
+        if(time > 10 && time < 14)
             return "lunch";
-        if(time > 18)
+        if(time > 14)
             return "dinner";
         else return "ERROR TIME!";
     }
