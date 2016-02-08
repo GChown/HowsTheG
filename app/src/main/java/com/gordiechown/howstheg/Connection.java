@@ -86,14 +86,17 @@ public class Connection {
     public class connect extends AsyncTask<String, Void, Void>{
         protected Void doInBackground(String... params){
             try{
-                System.out.println("Connecting to server");
+                //System.out.println("Connecting to server");
                 client = new Socket(params[0], Integer.parseInt(params[1]));
                 dout = new DataOutputStream(client.getOutputStream());
                 din = new DataInputStream(client.getInputStream());
-                dout.writeUTF(params[2]);
-                System.out.println("Sending device ID " + params[2]);
-                if(client.isConnected()) isConnected = true;
+                    isConnected = true;
+                    //System.out.println("Connected to server");
+                    //System.out.println("Sending device ID " + params[2]);
+                    dout.writeUTF(params[2]);
             }catch(IOException e){
+                System.out.println("Couldn't connect to server");
+                isConnected = false;
                 e.printStackTrace();
             }
             return null;
@@ -107,11 +110,11 @@ public class Connection {
 
         protected Float doInBackground(Void... params){
             try{
-                if(client != null && dout != null && din != null) {
+                if(isConnected) {
                     dout.writeInt(1);
                     gotRating = din.readFloat();
                     numVotes = din.readInt();
-                    System.out.println("Got rating " + gotRating + ", numVotes " + numVotes);
+                    //System.out.println("Got rating " + gotRating + ", numVotes " + numVotes);
                     return gotRating;
                 }
             }catch(IOException e){
@@ -125,10 +128,10 @@ public class Connection {
     public class sendRating extends AsyncTask<Integer, Void, Void>{
         protected Void doInBackground(Integer... params){
             try{
-                if(client != null && dout != null && din != null) {
+                if(isConnected) {
                     dout.writeInt(0);
                     dout.writeInt(params[0]);
-                    System.out.println("Sent " + params[0]);
+                    //System.out.println("Sent " + params[0]);
                 }
             }catch(IOException e){
                 isConnected = false;

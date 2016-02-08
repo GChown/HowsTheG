@@ -1,5 +1,23 @@
 <resources>
     <string name="app_name">How\'s the G?</string>
-    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
-
+    <string name="banner_ad_unit_id">ca-app-pub-3428510954115724/2462914694</string>
+    <string name="fetching">Getting information...</string>
+    <string name="notmealtime">Caf opens at 8AM.</string>
+    <string name="dinnertime">It\'s dinner.</string>
+    <string name="dinnerclosetime">It\'s dinner time (closing at 10!)</string>
+    <string name="lunchtime">It\'s lunch.</string>
+    <string name="breakfasttime">It\'s breakfast.</string>
+    <string name="howsdin">How\'s dinner?</string>
+    <string name="howslunch">How\'s lunch?</string>
+    <string name="howsbreakfast">How\'s breakfast?</string>
+    <string name="breakfast">breakfast</string>
+    <string name="lunch">lunch</string>
+    <string name="dinner">dinner</string>
+    <string name="noconnection">Couldn\'t connect to server.</string>
+    <plurals name="othervote">
+        <item quantity="zero">"Nobody has voted on "</item>
+        <item quantity="one">"%d person has given "</item>
+        <item quantity="other">"%d people have given "</item>
+    </plurals>
+    <string name="menu_settings">Settings</string>
 </resources>
