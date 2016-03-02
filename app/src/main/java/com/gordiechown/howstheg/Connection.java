@@ -1,6 +1,7 @@
 package com.gordiechown.howstheg;
 
 import android.os.AsyncTask;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -18,7 +19,6 @@ public class Connection {
     private String host;
     private String android_id;
     private int port;
-    private boolean isConnected;
     private int numVotes;
     /**
      * Creates connection to host
@@ -29,12 +29,14 @@ public class Connection {
         this.host = host;
         this.port = port;
         this.android_id = android_id;
-        isConnected = false;
         gotRating = 0;
         numVotes = 0;
         try {
             new connect().execute(host, "" + port, android_id);
+            if(client != null && client.isConnected())
             gotRating = new fetchRating().execute().get();
+            else
+                new connect().execute(host, "" + port, android_id);
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -59,7 +61,8 @@ public class Connection {
      */
     public float getRating(){
         try {
-            gotRating = new fetchRating().execute().get();
+           if(client != null && client.isConnected())
+               gotRating = new fetchRating().execute().get();
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -67,21 +70,29 @@ public class Connection {
     }
 
     /**
+     * Returns whether or not the client is connected to the server
+     * @return true if client is connected, false if it isn't
+     */
+    public boolean isConnected(){
+        if(client != null)
+        return client.isConnected();
+        else return false;
+    }
+
+    /**
      * Gets number of people who have voted
      * @return Number of people who have voted
      */
     public int getNumVotes(){
-        new fetchRating().execute();
+        try {
+            if (client != null && client.isConnected())
+                new fetchRating().execute();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         return numVotes;
     }
 
-    /**
-     * Tells if the socket is connected to the server
-     * @return true if connected to server
-     */
-    public boolean isConnected(){
-        return isConnected;
-    }
 
     public class connect extends AsyncTask<String, Void, Void>{
         protected Void doInBackground(String... params){
@@ -90,13 +101,11 @@ public class Connection {
                 client = new Socket(params[0], Integer.parseInt(params[1]));
                 dout = new DataOutputStream(client.getOutputStream());
                 din = new DataInputStream(client.getInputStream());
-                    isConnected = true;
                     //System.out.println("Connected to server");
                     //System.out.println("Sending device ID " + params[2]);
                     dout.writeUTF(params[2]);
             }catch(IOException e){
                 System.out.println("Couldn't connect to server");
-                isConnected = false;
                 e.printStackTrace();
             }
             return null;
@@ -110,15 +119,13 @@ public class Connection {
 
         protected Float doInBackground(Void... params){
             try{
-                if(isConnected) {
-                    dout.writeInt(1);
-                    gotRating = din.readFloat();
-                    numVotes = din.readInt();
-                    //System.out.println("Got rating " + gotRating + ", numVotes " + numVotes);
-                    return gotRating;
-                }
+                    if(isConnected()) {
+                        dout.writeInt(1);
+                        gotRating = din.readFloat();
+                        numVotes = din.readInt();
+                        return gotRating;
+                    }
             }catch(IOException e){
-                isConnected = false;
                 e.printStackTrace();
             }
             return null;
@@ -128,13 +135,12 @@ public class Connection {
     public class sendRating extends AsyncTask<Integer, Void, Void>{
         protected Void doInBackground(Integer... params){
             try{
-                if(isConnected) {
+                if(isConnected()) {
                     dout.writeInt(0);
                     dout.writeInt(params[0]);
                     //System.out.println("Sent " + params[0]);
                 }
             }catch(IOException e){
-                isConnected = false;
                 e.printStackTrace();
             }
             return null;

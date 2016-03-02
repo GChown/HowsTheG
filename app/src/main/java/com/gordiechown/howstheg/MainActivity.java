@@ -26,13 +26,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
-        final String HOST = "localhost";
-        final int PORT = 8000;
-        connection = new Connection(HOST, PORT, android_id);
+        startConnection();
         //Advert
         mAdView = (AdView) findViewById(R.id.adView);
-        //ADD TEST DEVICES OR FACE THE CONSEQUENCES
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
@@ -56,6 +52,13 @@ public class MainActivity extends AppCompatActivity {
         return connection;
     }
 
+    private void startConnection(){
+
+        String android_id = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        final String HOST = "146.148.39.126";
+        final int PORT = 8000;
+        connection = new Connection(HOST, PORT, android_id);
+    }
     private void setupViewPager(ViewPager viewPager) {
         Adapter adapter = new Adapter(getSupportFragmentManager());
         adapter.addFragment(new VoteFragment(), "Vote");
@@ -92,5 +95,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+        connection = null;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        if(connection == null) {
+            startConnection();
+        }
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 }

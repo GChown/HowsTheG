@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,20 +33,19 @@ public class VoteFragment extends Fragment{
         userRating = (RatingBar) view.findViewById(R.id.myRating);
         mealDescrip = (TextView) view.findViewById(R.id.mealDescrip);
         ratingSummary = (TextView) view.findViewById(R.id.ratingSummary);
-
         if (savedInstanceState != null) {
             // Restore value of members from saved state
             otherRating.setRating(savedInstanceState.getFloat("otherRating"));
         }
 
         //Send rating on change
-            userRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                    ((MainActivity) getActivity()).getConnection().sendRating((int) rating);
-                }
-            });
+        userRating.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                ((MainActivity) getActivity()).getConnection().sendRating((int) rating);
+            }
+        });
 
-        meal = getMeal();
+        meal = getMealTime();
         updateUIThread();
         mealDescrip.setText(meal);
 
@@ -63,36 +64,36 @@ public class VoteFragment extends Fragment{
     }
 
     /**
-    * Every three seconds update the otherRating bar and
-    * numVotes from server
+     * Every three seconds update the otherRating bar and
+     * numVotes labels from server
      */
     private void updateUIThread() {
         ratingSummary.setText(getString(R.string.fetching));
-        if (((MainActivity)getActivity()).getConnection().isConnected()) {
-            final Handler h = new Handler();
-            h.postDelayed(new Runnable() {
-                public void run() {
-                    if (((MainActivity)getActivity()).getConnection().isConnected()) {
-                        setRating(otherRating, ((MainActivity) getActivity()).getConnection().getRating());
-                        int numVotes = ((MainActivity)getActivity()).getConnection().getNumVotes();
-                        ratingSummary.setText(
-                                getResources().getQuantityString(R.plurals.othervote, numVotes, numVotes) + getMealName());
-                        h.postDelayed(this, 3000);
-                    } else {
-                        updateUIThread();
-                    }
+        final Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            public void run() {
+                boolean isConnected = ((MainActivity) getActivity()).getConnection().isConnected();
+                System.out.println("Running UI thread, connected: " + isConnected);
+                if (isConnected) {
+                    setRating(otherRating, ((MainActivity) getActivity()).getConnection().getRating());
+                    int numVotes = ((MainActivity)getActivity()).getConnection().getNumVotes();
+                    ratingSummary.setText(
+                            getResources().getQuantityString(R.plurals.othervote, numVotes, numVotes) + getMealName());
+                } else {
+                    setRating(otherRating, 0);
+                    ratingSummary.setText(getString(R.string.noconnection));
                 }
-            }, 3000);
-        } else {
-            setRating(otherRating, 0);
-            ratingSummary.setText(getString(R.string.noconnection));
-        }
+                h.postDelayed(this, 3000);
+            }
+        }, 3000);
     }
+
     /**
-     * Returns string value of meal.
-     *
+     * Asks how the meal is - 'How's breakfast/lunch/dinner', or
+     * says closing time if it's after 8:00PM
+     * @return String asking how the meal is
      */
-    String getMeal() {
+    String getMealTime() {
         DateFormat dateFormat = new SimpleDateFormat("HHmm");
         Calendar cal = Calendar.getInstance();
         int time = Integer.parseInt(dateFormat.format(cal.getTime()));
@@ -104,7 +105,7 @@ public class VoteFragment extends Fragment{
             return getString(R.string.howsbreakfast);
         } else if(hour >= 11 && hour < 16){
             return getString(R.string.howslunch);
-        } else if (hour >= 16 && hour < 22) {
+        } else if (hour >= 16 && hour <= 22) {
             if (hour >= 18) {
                 return getString(R.string.howsdin);
             }
@@ -112,6 +113,10 @@ public class VoteFragment extends Fragment{
         }
         return null;
     }
+    /**
+     * Returns lowercase string value of meal.
+     * @return meal name
+     */
     String getMealName(){
         DateFormat dateFormat = new SimpleDateFormat("HHmm");
         Calendar cal = Calendar.getInstance();
@@ -122,7 +127,7 @@ public class VoteFragment extends Fragment{
             return getString(R.string.breakfast);
         } else if(hour >= 11 && hour < 16){
             return getString(R.string.lunch);
-        } else if (hour >= 16 && hour <= 22) {
+        } else if (hour >= 16 && hour <= 24) {
             return getString(R.string.dinner);
         }
         return null;
@@ -134,13 +139,11 @@ public class VoteFragment extends Fragment{
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
         savedInstanceState.putFloat("otherRating", otherRating.getRating());
-        savedInstanceState.putFloat("userRating", userRating.getRating());
         super.onSaveInstanceState(savedInstanceState);
     }
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         // Restore UI state from the savedInstanceState.
         // This bundle has also been passed to onCreate.
-        setRating(userRating, savedInstanceState.getFloat("userRating"));
         setRating(otherRating, savedInstanceState.getFloat("otherRating"));
     }
 }
